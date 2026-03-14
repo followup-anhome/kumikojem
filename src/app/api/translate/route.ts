@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { NextRequest, NextResponse } from "next/server";
 
 // ── JP → EN  職場用フレーズ辞書（温かみのある英語）────────────

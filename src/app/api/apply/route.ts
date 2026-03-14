@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 /**
  * POST /api/apply
  * 求職者が求人に応募する。

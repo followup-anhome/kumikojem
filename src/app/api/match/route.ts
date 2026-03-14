@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 /**
  * POST /api/match
  * 指定求人に対してTalentをスコアリングし、物件推薦付きで返す。

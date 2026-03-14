@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 /**
  * GET /api/jobs
  * 全求人一覧を返す。Prisma接続できない場合はモックデータにフォールバック。
