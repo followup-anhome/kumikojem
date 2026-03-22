@@ -421,6 +421,16 @@ function ChatMonitorPanel() {
     if (!text) return;
     setStaffReply("");
     try {
+      let translated: string | undefined;
+      try {
+        const tr = await fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        translated = (await tr.json()).translated ?? undefined;
+      } catch { /* non-blocking */ }
+
       await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -429,6 +439,7 @@ function ChatMonitorPanel() {
           from: "staff",
           sender_name: "Yuki (KUMIKOJEM)",
           text,
+          translated,
           lang: "JP",
         }),
       });

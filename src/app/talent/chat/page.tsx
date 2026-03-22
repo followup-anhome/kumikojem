@@ -313,19 +313,12 @@ export default function FieldChatPage() {
       text: trimmed, timestamp: nowISO(), lang: myLang, delivered: false,
     };
     setMessages((prev) => [...prev, msg]);
-    if (myLang === "JP") {
-      setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, translating: true } : m));
-      const translated = await translateText(trimmed);
-      setMessages((prev) => prev.map((m) =>
-        m.id === msg.id ? { ...m, translated, translating: false, delivered: true } : m
-      ));
-      persist({ ...msg, translated });
-    } else {
-      setTimeout(() => setMessages((prev) =>
-        prev.map((m) => m.id === msg.id ? { ...m, delivered: true } : m)
-      ), 500);
-      persist(msg);
-    }
+    setMessages((prev) => prev.map((m) => m.id === msg.id ? { ...m, translating: true } : m));
+    const translated = await translateText(trimmed);
+    setMessages((prev) => prev.map((m) =>
+      m.id === msg.id ? { ...m, translated, translating: false, delivered: true } : m
+    ));
+    persist({ ...msg, translated });
     scheduleAutoReply(activeContact, 1800);
   }
 
