@@ -14,7 +14,7 @@ export async function GET() {
         name: "デモ株式会社",
         industry: "LOGISTICS" as any,
         location: "大阪府大阪市",
-        contact_email: "demo@company.jp",
+
       },
     })
 
