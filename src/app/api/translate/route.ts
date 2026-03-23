@@ -266,36 +266,33 @@ export async function POST(req: NextRequest) {
     const sourceLang = detectLang(text);
     const finalTarget = target_lang ?? (sourceLang === "ja" ? "en" : "ja");
 
-    // Try OpenAI first if API key is configured
-    const apiKey = process.env.OPENAI_API_KEY;
+    // Try Claude API if API key is configured
+    const apiKey = process.env.ANTHROPIC_API_KEY;
     if (apiKey) {
       try {
         const langNames: Record<string, string> = { ja: "Japanese", en: "English" };
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
           },
           body: JSON.stringify({
-            model: "gpt-4o-mini",
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 512,
+            system: `You are a professional translator specializing in warm, friendly workplace communication for Filipino workers in Japan. Translate to ${langNames[finalTarget] ?? finalTarget}. Use warm, encouraging language with appropriate emoji. Return ONLY the translated text, nothing else.`,
             messages: [
-              {
-                role: "system",
-                content: `You are a professional translator specializing in warm, friendly workplace communication for Filipino workers in Japan. Translate to ${langNames[finalTarget] ?? finalTarget}. Use warm, encouraging language with appropriate emoji. Return ONLY the translated text.`,
-              },
               { role: "user", content: text },
             ],
-            max_tokens: 512,
-            temperature: 0.2,
           }),
         });
 
         if (response.ok) {
           const data = await response.json();
-          const translated = data.choices?.[0]?.message?.content?.trim();
+          const translated = data.content?.[0]?.text?.trim();
           if (translated) {
-            return NextResponse.json({ translated, source_lang: sourceLang, target_lang: finalTarget, method: "openai" });
+            return NextResponse.json({ translated, source_lang: sourceLang, target_lang: finalTarget, method: "claude" });
           }
         }
       } catch {
