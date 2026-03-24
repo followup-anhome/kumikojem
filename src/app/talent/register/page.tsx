@@ -8,51 +8,91 @@ import { analyzeFBProfile, toPercent, type FBAnalysisResult } from "@/lib/fb-ana
 // ─── 定数 ─────────────────────────────────────────────────
 
 const VISA_OPTIONS = [
-  { value: "ENGINEER",            label: "技術・人文知識・国際業務（技人国）" },
-  { value: "SPECIFIED_SKILLED_1", label: "特定技能1号" },
-  { value: "SPECIFIED_SKILLED_2", label: "特定技能2号" },
-  { value: "TECHNICAL_INTERN",    label: "技能実習" },
-  { value: "STUDENT",             label: "留学" },
-  { value: "PERMANENT_RESIDENT",  label: "永住者" },
-  { value: "SPOUSE",              label: "配偶者ビザ" },
-  { value: "OTHER",               label: "その他" },
+  { value: "ENGINEER",            label: "Engineer / Specialist" },
+  { value: "SPECIFIED_SKILLED_1", label: "Specified Skilled Worker 1" },
+  { value: "SPECIFIED_SKILLED_2", label: "Specified Skilled Worker 2" },
+  { value: "TECHNICAL_INTERN",    label: "Technical Intern Training" },
+  { value: "STUDENT",             label: "Student Visa" },
+  { value: "PERMANENT_RESIDENT",  label: "Permanent Resident" },
+  { value: "SPOUSE",              label: "Spouse Visa" },
+  { value: "OTHER",               label: "Other" },
 ];
 
 const JAPANESE_LEVELS = [
-  { value: "N1",   label: "N1（最上級）" },
-  { value: "N2",   label: "N2（ビジネス可）" },
-  { value: "N3",   label: "N3（日常会話）" },
-  { value: "N4",   label: "N4（基礎）" },
-  { value: "N5",   label: "N5（入門）" },
-  { value: "NONE", label: "なし" },
+  { value: "N1",   label: "N1 (Advanced)" },
+  { value: "N2",   label: "N2 (Business)" },
+  { value: "N3",   label: "N3 (Daily Conv.)" },
+  { value: "N4",   label: "N4 (Basic)" },
+  { value: "N5",   label: "N5 (Beginner)" },
+  { value: "NONE", label: "None" },
 ];
 
 const ENGLISH_LEVELS = [
-  { value: "BUSINESS", label: "ビジネスレベル" },
-  { value: "DAILY",    label: "日常会話" },
-  { value: "BASIC",    label: "基礎" },
+  { value: "BUSINESS", label: "Business Level" },
+  { value: "DAILY",    label: "Daily Conversation" },
+  { value: "BASIC",    label: "Basic" },
   { value: "NONE",     label: "なし" },
 ];
 
 const SKILL_OPTIONS = [
-  { value: "介護",   icon: "🤝", label: "介護・福祉" },
-  { value: "建設",   icon: "🏗️", label: "建設・土木" },
-  { value: "製造",   icon: "🏭", label: "製造・工場" },
-  { value: "IT",     icon: "💻", label: "IT・システム" },
-  { value: "飲食",   icon: "🍜", label: "飲食・調理" },
-  { value: "農業",   icon: "🌾", label: "農業・林業" },
-  { value: "運送",   icon: "🚛", label: "運送・物流" },
-  { value: "その他", icon: "✨", label: "その他" },
+  { value: "介護",   icon: "🤝", label: "Care / Welfare" },
+  { value: "建設",   icon: "🏗️", label: "Construction" },
+  { value: "製造",   icon: "🏭", label: "Manufacturing" },
+  { value: "IT",     icon: "💻", label: "IT / Systems" },
+  { value: "飲食",   icon: "🍜", label: "Food / Cooking" },
+  { value: "農業",   icon: "🌾", label: "Agriculture" },
+  { value: "運送",   icon: "🚛", label: "Logistics" },
+  { value: "Other", icon: "✨", label: "Other" },
 ];
 
 const PREFECTURES = [
-  "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
-  "茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県",
-  "新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県",
-  "静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県",
-  "奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県",
-  "徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県",
-  "熊本県","大分県","宮崎県","鹿児島県","沖縄県",
+  { value: "Hokkaido", label: "Hokkaido" },
+  { value: "Aomori", label: "Aomori" },
+  { value: "Iwate", label: "Iwate" },
+  { value: "Miyagi", label: "Miyagi" },
+  { value: "Akita", label: "Akita" },
+  { value: "Yamagata", label: "Yamagata" },
+  { value: "Fukushima", label: "Fukushima" },
+  { value: "Ibaraki", label: "Ibaraki" },
+  { value: "Tochigi", label: "Tochigi" },
+  { value: "Gunma", label: "Gunma" },
+  { value: "Saitama", label: "Saitama" },
+  { value: "Chiba", label: "Chiba" },
+  { value: "Tokyo", label: "Tokyo" },
+  { value: "Kanagawa", label: "Kanagawa" },
+  { value: "Niigata", label: "Niigata" },
+  { value: "Toyama", label: "Toyama" },
+  { value: "Ishikawa", label: "Ishikawa" },
+  { value: "Fukui", label: "Fukui" },
+  { value: "Yamanashi", label: "Yamanashi" },
+  { value: "Nagano", label: "Nagano" },
+  { value: "Gifu", label: "Gifu" },
+  { value: "Shizuoka", label: "Shizuoka" },
+  { value: "Aichi", label: "Aichi" },
+  { value: "Mie", label: "Mie" },
+  { value: "Shiga", label: "Shiga" },
+  { value: "Kyoto", label: "Kyoto" },
+  { value: "Osaka", label: "Osaka" },
+  { value: "Hyogo", label: "Hyogo" },
+  { value: "Nara", label: "Nara" },
+  { value: "Wakayama", label: "Wakayama" },
+  { value: "Tottori", label: "Tottori" },
+  { value: "Shimane", label: "Shimane" },
+  { value: "Okayama", label: "Okayama" },
+  { value: "Hiroshima", label: "Hiroshima" },
+  { value: "Yamaguchi", label: "Yamaguchi" },
+  { value: "Tokushima", label: "Tokushima" },
+  { value: "Kagawa", label: "Kagawa" },
+  { value: "Ehime", label: "Ehime" },
+  { value: "Kochi", label: "Kochi" },
+  { value: "Fukuoka", label: "Fukuoka" },
+  { value: "Saga", label: "Saga" },
+  { value: "Nagasaki", label: "Nagasaki" },
+  { value: "Kumamoto", label: "Kumamoto" },
+  { value: "Oita", label: "Oita" },
+  { value: "Miyazaki", label: "Miyazaki" },
+  { value: "Kagoshima", label: "Kagoshima" },
+  { value: "Okinawa", label: "Okinawa" },
 ];
 
 const CERT_OPTIONS = [
@@ -106,23 +146,23 @@ const initialForm: FormData = {
 function validateStep(step: Step, form: FormData): FormErrors {
   const errs: FormErrors = {};
   if (step === "profile") {
-    if (!form.name.trim())          errs.name = "名前を入力してください";
+    if (!form.name.trim())          errs.name = "Please enter your full name";
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-                                     errs.email = "正しいメールアドレスを入力してください";
-    if (!form.visa_type)             errs.visa_type = "ビザ種別を選択してください";
-    if (!form.japanese_level)        errs.japanese_level = "日本語レベルを選択してください";
-    if (!form.english_level)         errs.english_level = "英語レベルを選択してください";
+                                     errs.email = "Please enter a valid email address";
+    if (!form.visa_type)             errs.visa_type = "Please select your visa type";
+    if (!form.japanese_level)        errs.japanese_level = "Please select your Japanese level";
+    if (!form.english_level)         errs.english_level = "Please select your English level";
     if (form.height && (isNaN(+form.height) || +form.height < 100 || +form.height > 250))
                                      errs.height = "100〜250cm の値を入力してください";
     if (form.weight && (isNaN(+form.weight) || +form.weight < 30 || +form.weight > 200))
                                      errs.weight = "30〜200kg の値を入力してください";
   }
   if (step === "skills") {
-    if (form.skills.length === 0)    errs.skills = "スキルを1つ以上選択してください";
-    if (!form.desired_prefecture)    errs.desired_prefecture = "希望勤務地を選択してください";
-    if (!form.desired_salary.trim()) errs.desired_salary = "希望給与を入力してください";
+    if (form.skills.length === 0)    errs.skills = "Please select at least one skill";
+    if (!form.desired_prefecture)    errs.desired_prefecture = "Please select your preferred location";
+    if (!form.desired_salary.trim()) errs.desired_salary = "Please enter your desired salary";
     else if (isNaN(+form.desired_salary) || +form.desired_salary <= 0)
-                                     errs.desired_salary = "正しい金額を入力してください";
+                                     errs.desired_salary = "Please enter a valid amount";
   }
   return errs;
 }
@@ -282,7 +322,7 @@ export default function RegisterPage() {
   }
 
   // ── ヘッダー ─────────────────────────────────────────
-  const STEP_LABELS = ["基本情報", "スキル・希望", "自己PR", "FB解析", "確認"];
+  const STEP_LABELS = ["Basic Info", "Skills", "Self PR", "FB Analysis", "Confirm"];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -315,18 +355,18 @@ export default function RegisterPage() {
       <div className="max-w-lg mx-auto p-4 pb-12">
 
         {/* ══════════════════════════════════════════════
-            STEP 1: 基本情報
+            STEP 1: Basic Info
         ══════════════════════════════════════════════ */}
         {step === "profile" && (
           <div className="space-y-5 mt-2">
             <StepHeader
               icon="👤"
-              title="基本情報"
+              title="Basic Information"
               desc="あなたのプロフィールを入力してください。"
             />
 
             {/* 名前 */}
-            <Field label="氏名" required error={errors.name}>
+            <Field label="Full Name" required error={errors.name}>
               <input
                 type="text"
                 value={form.name}
@@ -338,7 +378,7 @@ export default function RegisterPage() {
 
             {/* 性別 */}
             <div>
-              <label className="text-sm font-semibold text-slate-700 block mb-2">性別</label>
+              <label className="text-sm font-semibold text-slate-700 block mb-2">Gender</label>
               <div className="grid grid-cols-3 gap-2">
                 {([["MALE","👨 男性"],["FEMALE","👩 女性"],["OTHER","🧑 その他"]] as const).map(([v, l]) => (
                   <ToggleBtn key={v} active={form.gender === v} onClick={() => set("gender", v)}>
@@ -350,18 +390,18 @@ export default function RegisterPage() {
 
             {/* 身長・体重 */}
             <div className="grid grid-cols-2 gap-3">
-              <Field label="身長 (cm)" error={errors.height}>
+              <Field label="Height (cm)" error={errors.height}>
                 <input type="number" value={form.height} onChange={(e) => set("height", e.target.value)}
                   placeholder="例：170" className={inputCls(!!errors.height)} />
               </Field>
-              <Field label="体重 (kg)" error={errors.weight}>
+              <Field label="Weight (kg)" error={errors.weight}>
                 <input type="number" value={form.weight} onChange={(e) => set("weight", e.target.value)}
                   placeholder="例：65" className={inputCls(!!errors.weight)} />
               </Field>
             </div>
 
             {/* ビザ種別 */}
-            <Field label="ビザ種別" required error={errors.visa_type}>
+            <Field label="Visa Type" required error={errors.visa_type}>
               <select value={form.visa_type} onChange={(e) => set("visa_type", e.target.value)}
                 className={selectCls(!!errors.visa_type)}>
                 <option value="">選択してください</option>
@@ -372,7 +412,7 @@ export default function RegisterPage() {
             </Field>
 
             {/* 日本語レベル */}
-            <Field label="日本語レベル（JLPT）" required error={errors.japanese_level}>
+            <Field label="Japanese Level (JLPT)" required error={errors.japanese_level}>
               <div className="grid grid-cols-3 gap-2">
                 {JAPANESE_LEVELS.map((l) => (
                   <ToggleBtn
@@ -388,7 +428,7 @@ export default function RegisterPage() {
             </Field>
 
             {/* 英語レベル */}
-            <Field label="英語レベル" required error={errors.english_level}>
+            <Field label="English Level" required error={errors.english_level}>
               <div className="grid grid-cols-2 gap-2">
                 {ENGLISH_LEVELS.map((l) => (
                   <ToggleBtn
@@ -407,7 +447,7 @@ export default function RegisterPage() {
             <div className="pt-1 border-t border-slate-100">
               <p className="text-xs text-slate-400 mb-3">連絡先（任意）</p>
               <div className="space-y-3">
-                <Field label="メールアドレス" error={errors.email}>
+                <Field label="Email Address" required error={errors.email}>
                   <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)}
                     placeholder="例：juan@example.com" className={inputCls(!!errors.email)} />
                 </Field>
@@ -419,24 +459,24 @@ export default function RegisterPage() {
             </div>
 
             <NextBtn onClick={() => goNext("skills")}>
-              次へ：スキル・希望条件 →
+              Next: Skills & Preferences →
             </NextBtn>
           </div>
         )}
 
         {/* ══════════════════════════════════════════════
-            STEP 2: スキル・希望条件
+            STEP 2: Skills & Preferences
         ══════════════════════════════════════════════ */}
         {step === "skills" && (
           <div className="space-y-5 mt-2">
             <StepHeader
               icon="🎯"
-              title="スキル・希望条件"
-              desc="経験・スキルと勤務条件を教えてください。"
+              title="Skills & Preferences"
+              desc="Tell us about your experience and work preferences."
             />
 
             {/* スキル */}
-            <Field label="スキル・経験" required error={errors.skills}>
+            <Field label="Skills & Experience" required error={errors.skills}>
               <div className="grid grid-cols-2 gap-2">
                 {SKILL_OPTIONS.map((s) => (
                   <button
@@ -461,8 +501,8 @@ export default function RegisterPage() {
             {/* 資格・免許 */}
             <div>
               <label className="text-sm font-semibold text-slate-700 block mb-2">
-                資格・免許
-                <span className="ml-2 text-xs font-normal text-slate-400">任意・複数選択可</span>
+                Certifications & Licenses
+                <span className="ml-2 text-xs font-normal text-slate-400">Optional — multiple selection</span>
               </label>
               <div className="flex flex-wrap gap-2">
                 {CERT_OPTIONS.map((c) => (
@@ -482,21 +522,21 @@ export default function RegisterPage() {
             </div>
 
             {/* 希望勤務地 */}
-            <Field label="希望勤務地（都道府県）" required error={errors.desired_prefecture}>
+            <Field label="Preferred Location (Prefecture)" required error={errors.desired_prefecture}>
               <select
                 value={form.desired_prefecture}
                 onChange={(e) => set("desired_prefecture", e.target.value)}
                 className={selectCls(!!errors.desired_prefecture)}
               >
-                <option value="">都道府県を選択</option>
+                <option value="">Select prefecture</option>
                 {PREFECTURES.map((p) => (
-                  <option key={p} value={p}>{p}</option>
+                  <option key={p.value} value={p.value}>{p.label}</option>
                 ))}
               </select>
             </Field>
 
-            {/* 希望給与 */}
-            <Field label="希望給与" required error={errors.desired_salary}>
+            {/* 希望給与（ペソ入力・円換算） */}
+            <Field label="Desired Salary (in PHP ₱)" required error={errors.desired_salary}>
               <div className="flex gap-2">
                 <div className="flex border border-slate-200 rounded-xl overflow-hidden">
                   {(["MONTHLY","HOURLY"] as const).map((t) => (
@@ -509,31 +549,42 @@ export default function RegisterPage() {
                           : "bg-white text-slate-500 hover:bg-slate-50"
                       }`}
                     >
-                      {t === "MONTHLY" ? "月給" : "時給"}
+                      {t === "MONTHLY" ? "Monthly" : "Hourly"}
                     </button>
                   ))}
                 </div>
                 <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">¥</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">₱</span>
                   <input
                     type="number"
                     value={form.desired_salary}
                     onChange={(e) => set("desired_salary", e.target.value)}
-                    placeholder={form.salary_type === "MONTHLY" ? "例：180000" : "例：1100"}
+                    placeholder={form.salary_type === "MONTHLY" ? "e.g. 66000" : "e.g. 400"}
                     className={`${inputCls(!!errors.desired_salary)} pl-7`}
                   />
                 </div>
               </div>
-              {form.desired_salary && !errors.desired_salary && (
-                <p className="text-xs text-slate-400 mt-1">
-                  ¥{parseInt(form.desired_salary).toLocaleString()}/{form.salary_type === "MONTHLY" ? "月" : "時間"}
-                </p>
-              )}
+              {form.desired_salary && !errors.desired_salary && (() => {
+                const php = parseInt(form.desired_salary);
+                const jpy = Math.round(php / 0.37);
+                return (
+                  <div className="mt-2 flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-semibold text-emerald-600">
+                      ₱{php.toLocaleString()}/{form.salary_type === "MONTHLY" ? "month" : "hr"}
+                    </span>
+                    <span className="text-xs text-slate-400">≈</span>
+                    <span className="text-sm font-semibold text-blue-600">
+                      ¥{jpy.toLocaleString()}/{form.salary_type === "MONTHLY" ? "month" : "hr"}
+                    </span>
+                    <span className="text-[10px] text-slate-400">(¥1 = ₱0.37)</span>
+                  </div>
+                );
+              })()}
             </Field>
 
             <div className="flex gap-3">
               <BackBtn onClick={() => goBack("profile")} />
-              <NextBtn onClick={() => goNext("pr")}>次へ：自己PR →</NextBtn>
+              <NextBtn onClick={() => goNext("pr")}>Next: Self PR →</NextBtn>
             </div>
           </div>
         )}
@@ -632,7 +683,7 @@ export default function RegisterPage() {
 
             <div className="flex gap-3">
               <BackBtn onClick={() => goBack("skills")} />
-              <NextBtn onClick={() => goNext("fb")}>次へ：FB解析 →</NextBtn>
+              <NextBtn onClick={() => goNext("fb")}>Next: FB Analysis →</NextBtn>
             </div>
           </div>
         )}
@@ -747,24 +798,24 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <ConfirmCard title="基本情報">
-              <ConfirmRow label="氏名"       value={form.name} />
-              <ConfirmRow label="性別"       value={form.gender === "MALE" ? "男性" : form.gender === "FEMALE" ? "女性" : "その他"} />
+            <ConfirmCard title="Basic Information">
+              <ConfirmRow label="Full Name"       value={form.name} />
+              <ConfirmRow label="性別"       value={form.gender === "MALE" ? "Male" : form.gender === "FEMALE" ? "Female" : "Other"} />
               {form.height && <ConfirmRow label="身長"  value={`${form.height} cm`} />}
               {form.weight && <ConfirmRow label="体重"  value={`${form.weight} kg`} />}
-              <ConfirmRow label="ビザ種別"   value={VISA_OPTIONS.find(o => o.value === form.visa_type)?.label ?? "—"} />
+              <ConfirmRow label="Visa Type"   value={VISA_OPTIONS.find(o => o.value === form.visa_type)?.label ?? "—"} />
               <ConfirmRow label="日本語"     value={JAPANESE_LEVELS.find(l => l.value === form.japanese_level)?.label ?? "—"} />
               <ConfirmRow label="英語"       value={ENGLISH_LEVELS.find(l => l.value === form.english_level)?.label ?? "—"} />
               {form.email && <ConfirmRow label="メール" value={form.email} />}
               {form.phone && <ConfirmRow label="電話"   value={form.phone} />}
             </ConfirmCard>
 
-            <ConfirmCard title="スキル・希望条件">
+            <ConfirmCard title="Skills & Preferences">
               <ConfirmRow label="スキル"     value={form.skills.join("、") || "—"} />
               {form.certs.length > 0 && <ConfirmRow label="資格"  value={form.certs.join("、")} />}
               <ConfirmRow label="希望勤務地" value={form.desired_prefecture || "—"} />
               <ConfirmRow
-                label="希望給与"
+                label="Desired Salary"
                 value={form.desired_salary ? `¥${parseInt(form.desired_salary).toLocaleString()}/${form.salary_type === "MONTHLY" ? "月" : "時間"}` : "—"}
                 highlight
               />
