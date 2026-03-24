@@ -4,7 +4,8 @@ import { use, useState } from "react";
 import Link from "next/link";
 import PropertyImageCard from "@/components/talent/PropertyImageCard";
 import BookingModal, { type BookingResult } from "@/components/talent/BookingModal";
-import { MOCK_JOBS, MOCK_PROPERTIES } from "@/lib/mock-data";
+import { MOCK_JOBS, MOCK_PROPERTIES, COMPANY_NAME_EN, LOCATION_NAME_EN } from "@/lib/mock-data";
+import { toEnTitle, toEnDesc, formatSalaryWithPeso } from "@/lib/job-translations";
 import { calcDistanceKm } from "@/lib/geo-matcher";
 
 const CATEGORY_CONFIG = {
@@ -51,6 +52,11 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
   }
 
   const cfg = CATEGORY_CONFIG[job.category];
+  const titleEn = toEnTitle(job.title);
+  const companyEn = COMPANY_NAME_EN[job.company_name] || job.company_name;
+  const locationEn = LOCATION_NAME_EN[job.location_name] || job.location_name;
+  const descEn = toEnDesc(job.description || "");
+  const { jpy, php } = formatSalaryWithPeso(job.salary_min, job.salary_max);
 
   // 近隣物件 (5km以内、距離昇順)
   const nearbyProps = MOCK_PROPERTIES
@@ -75,8 +81,8 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
           </Link>
           <span className="text-lg">{cfg.emoji}</span>
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-sm truncate">{job.title}</div>
-            <div className="text-xs opacity-70">{job.company_name}</div>
+            <div className="font-bold text-sm truncate">{titleEn}</div>
+            <div className="text-xs opacity-70">{companyEn}</div>
           </div>
         </div>
       </header>
@@ -91,21 +97,19 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
             </div>
           )}
           <div className="text-xs opacity-70 uppercase tracking-wider mb-1">{cfg.label}</div>
-          <h1 className="text-2xl font-black leading-tight">{job.title}</h1>
-          <p className="text-sm opacity-80 mt-1">{job.company_name}</p>
+          <h1 className="text-2xl font-black leading-tight">{titleEn}</h1>
+          <div className="mt-1">
+            <p className="text-sm font-semibold opacity-90">{companyEn}</p>
+            <p className="text-xs opacity-60">{job.company_name}</p>
+          </div>
         </div>
 
         <div className="px-4 -mt-4 space-y-4 pb-32">
           {/* Key Info Card */}
           <div className="bg-white rounded-2xl shadow-md p-4 border border-slate-100">
             <div className="grid grid-cols-2 gap-3">
-              <InfoBox icon="💴" label="Monthly Salary"
-                value={job.salary_min && job.salary_max
-                  ? `¥${(job.salary_min / 10000).toFixed(0)}〜${(job.salary_max / 10000).toFixed(0)}万`
-                  : "Negotiable"}
-                valueStyle="text-blue-600 font-bold text-base"
-              />
-              <InfoBox icon="📍" label="Location" value={job.location_name} />
+              <InfoBoxSalary jpy={jpy} php={php} />
+              <InfoBoxBilingual icon="📍" label="Location" valueEn={locationEn} valueJa={job.location_name} />
               <InfoBox
                 icon={job.housing_status ? "🏠" : "🚶"}
                 label="Company Housing"
@@ -119,7 +123,10 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
           {/* About the Job */}
           <div className="bg-white rounded-2xl shadow-sm p-4 border border-slate-100">
             <h2 className="font-bold text-slate-900 mb-2">About this Job</h2>
-            <p className="text-sm text-slate-600 leading-relaxed">{job.description}</p>
+            <p className="text-sm text-slate-600 leading-relaxed">{descEn}</p>
+            {descEn !== job.description && (
+              <p className="text-xs text-slate-400 mt-1 border-t border-slate-50 pt-2">{job.description}</p>
+            )}
           </div>
 
           {/* Required Certificates */}
@@ -148,7 +155,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ id: string
                 <div className="flex-1">
                   <h3 className="font-bold text-slate-900 text-sm">Ready to interview?</h3>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Schedule directly with {job.company_name}. Pick your date and time.
+                    Schedule directly with {companyEn}. Pick your date and time.
                   </p>
                 </div>
               </div>
@@ -251,6 +258,41 @@ function InfoBox({ icon, label, value, valueStyle = "" }: {
         <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">{label}</span>
       </div>
       <div className={`text-sm font-semibold text-slate-800 ${valueStyle}`}>{value}</div>
+    </div>
+  );
+}
+
+function InfoBoxBilingual({ icon, label, valueEn, valueJa }: {
+  icon: string; label: string; valueEn: string; valueJa: string;
+}) {
+  return (
+    <div className="bg-slate-50 rounded-xl p-3">
+      <div className="flex items-center gap-1 mb-1">
+        <span className="text-sm">{icon}</span>
+        <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">{label}</span>
+      </div>
+      <div className="text-sm font-semibold text-slate-800">{valueEn}</div>
+      <div className="text-xs text-slate-400">{valueJa}</div>
+    </div>
+  );
+}
+
+function InfoBoxSalary({ jpy, php }: { jpy: string; php: string }) {
+  return (
+    <div className="bg-slate-50 rounded-xl p-3 col-span-2">
+      <div className="flex items-center gap-1 mb-1">
+        <span className="text-sm">💴</span>
+        <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">Monthly Salary</span>
+      </div>
+      <div className="flex items-baseline gap-2 flex-wrap">
+        <span className="text-base font-bold text-blue-600">{jpy}</span>
+        {php && (
+          <span className="text-sm font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+            ≈ {php}
+          </span>
+        )}
+      </div>
+      <p className="text-[10px] text-slate-400 mt-0.5">*PHP rate approx. ¥1 = ₱0.37</p>
     </div>
   );
 }
