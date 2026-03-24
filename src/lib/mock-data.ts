@@ -376,3 +376,16 @@ export const MOCK_PROPERTIES: MockProperty[] = [
     ],
   },
 ];
+
+// 社名・所在地の英語翻訳
+export const COMPANY_NAME_EN: Record<string, string> = {
+  "西淀川運輸株式会社": "Nishiyodogawa Transport Co., Ltd.",
+  "みどりケアサービス": "Midori Care Service",
+  "大阪鉄筋工業株式会社": "Osaka Rebar Industry Co., Ltd.",
+};
+
+export const LOCATION_NAME_EN: Record<string, string> = {
+  "大阪市西淀川区大和田": "Yamato-cho, Nishiyodogawa, Osaka",
+  "兵庫県尼崎市南武庫之荘": "Minami-Mukoshinosho, Amagasaki, Hyogo",
+  "大阪市淀川区西中島": "Nishi-Nakajima, Yodogawa, Osaka",
+};

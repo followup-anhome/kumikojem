@@ -5,6 +5,7 @@ import PropertyImageCard from "./PropertyImageCard";
 import type { MockJob, MockProperty } from "@/lib/mock-data";
 import { calcDistanceKm } from "@/lib/geo-matcher";
 import { toEnTitle, toEnDesc, formatSalaryWithPeso } from "@/lib/job-translations";
+import { COMPANY_NAME_EN, LOCATION_NAME_EN } from "@/lib/mock-data";
 
 export interface JobHousingCardProps {
   job: MockJob;
@@ -53,6 +54,8 @@ export default function JobHousingCard({
   const { jpy, php } = formatSalaryWithPeso(job.salary_min, job.salary_max);
   const titleEn = toEnTitle(job.title);
   const descEn = toEnDesc(job.description || "");
+  const companyEn = COMPANY_NAME_EN[job.company_name] || job.company_name;
+  const locationEn = LOCATION_NAME_EN[job.location_name] || job.location_name;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-100 w-full">
@@ -88,7 +91,10 @@ export default function JobHousingCard({
       <div className="p-4">
         {/* タイトル（英語） */}
         <h2 className="text-xl font-black text-slate-900 leading-tight">{titleEn}</h2>
-        <p className="text-sm text-slate-500 mt-0.5">{job.company_name}</p>
+        <div className="mt-0.5">
+          <p className="text-sm font-semibold text-slate-700">{companyEn}</p>
+          <p className="text-xs text-slate-400">{job.company_name}</p>
+        </div>
 
         <div className="grid grid-cols-2 gap-2 mt-4">
           {/* 給与（JPY + PHP） */}
@@ -108,7 +114,7 @@ export default function JobHousingCard({
             <p className="text-[10px] text-slate-400 mt-0.5">*PHP rate approx. ¥1 = ₱0.37</p>
           </div>
 
-          <InfoChip icon="📍" label="Location" value={job.location_name} />
+          <InfoChipBilingual icon="📍" label="Location" valueEn={locationEn} valueJa={job.location_name} />
           <InfoChip
             icon={job.housing_status ? "🏠" : "🚶"}
             label="Housing"
@@ -196,6 +202,23 @@ function InfoChip({
         <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">{label}</span>
       </div>
       <div className={`text-sm font-semibold ${valueColor} truncate`}>{value}</div>
+    </div>
+  );
+}
+
+function InfoChipBilingual({
+  icon, label, valueEn, valueJa,
+}: {
+  icon: string; label: string; valueEn: string; valueJa: string;
+}) {
+  return (
+    <div className="bg-slate-50 rounded-xl p-2.5">
+      <div className="flex items-center gap-1.5 mb-0.5">
+        <span className="text-sm">{icon}</span>
+        <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">{label}</span>
+      </div>
+      <div className="text-sm font-semibold text-slate-800 truncate">{valueEn}</div>
+      <div className="text-xs text-slate-400 truncate">{valueJa}</div>
     </div>
   );
 }
