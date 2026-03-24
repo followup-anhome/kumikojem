@@ -1,21 +1,10 @@
 "use client";
 
-/**
- * JobHousingCard.tsx
- * 求人・住まい一体型カード — フィリピン人材向けスマホUI（英語）
- *
- * 表示内容:
- *   ① 求人情報（カテゴリ・タイトル・給与・場所・社宅有無）
- *   ② マッチスコア（存在する場合）
- *   ③ Critical Need バッジ（2024問題対応 LOGISTICS 求人）
- *   ④ 近隣のアンホーム物件（横スクロール写真カード）
- *   ⑤ Apply Now + 詳細リンクボタン
- */
-
 import Link from "next/link";
 import PropertyImageCard from "./PropertyImageCard";
 import type { MockJob, MockProperty } from "@/lib/mock-data";
 import { calcDistanceKm } from "@/lib/geo-matcher";
+import { toEnTitle, toEnDesc, formatSalaryWithPeso } from "@/lib/job-translations";
 
 export interface JobHousingCardProps {
   job: MockJob;
@@ -47,7 +36,6 @@ export default function JobHousingCard({
 }: JobHousingCardProps) {
   const cfg = CATEGORY_CONFIG[job.category];
 
-  // 勤務地から5km以内の物件を距離昇順で取得
   const nearbyProps = properties
     .map((p) => ({
       ...p,
@@ -62,17 +50,14 @@ export default function JobHousingCard({
     .sort((a, b) => a.distance_km - b.distance_km)
     .slice(0, 4);
 
-  const salaryText =
-    job.salary_min && job.salary_max
-      ? `¥${(job.salary_min / 10000).toFixed(0)}〜${(job.salary_max / 10000).toFixed(0)}万/月`
-      : job.salary_min
-      ? `¥${(job.salary_min / 10000).toFixed(0)}万+/月`
-      : "Salary negotiable";
+  const { jpy, php } = formatSalaryWithPeso(job.salary_min, job.salary_max);
+  const titleEn = toEnTitle(job.title);
+  const descEn = toEnDesc(job.description || "");
 
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-100 w-full">
 
-      {/* ── カテゴリヘッダー ──────────────────────────── */}
+      {/* Category Header */}
       <div className={`${cfg.bg} px-4 py-3`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -89,7 +74,6 @@ export default function JobHousingCard({
           )}
         </div>
 
-        {/* Critical Need badge */}
         {job.critical_need && (
           <div className="flex items-center gap-2 mt-2">
             <span className="inline-flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
@@ -100,13 +84,30 @@ export default function JobHousingCard({
         )}
       </div>
 
-      {/* ── 求人情報 ──────────────────────────────────── */}
+      {/* Job Info */}
       <div className="p-4">
-        <h2 className="text-xl font-black text-slate-900 leading-tight">{job.title}</h2>
-        <p className="text-sm text-slate-500 mt-1">{job.company_name}</p>
+        {/* タイトル（英語） */}
+        <h2 className="text-xl font-black text-slate-900 leading-tight">{titleEn}</h2>
+        <p className="text-sm text-slate-500 mt-0.5">{job.company_name}</p>
 
         <div className="grid grid-cols-2 gap-2 mt-4">
-          <InfoChip icon="💴" label="Salary" value={salaryText} />
+          {/* 給与（JPY + PHP） */}
+          <div className="bg-slate-50 rounded-xl p-2.5 col-span-2">
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-sm">💴</span>
+              <span className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">Salary</span>
+            </div>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-sm font-bold text-slate-800">{jpy}</span>
+              {php && (
+                <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                  ≈ {php}
+                </span>
+              )}
+            </div>
+            <p className="text-[10px] text-slate-400 mt-0.5">*PHP rate approx. ¥1 = ₱0.37</p>
+          </div>
+
           <InfoChip icon="📍" label="Location" value={job.location_name} />
           <InfoChip
             icon={job.housing_status ? "🏠" : "🚶"}
@@ -114,17 +115,17 @@ export default function JobHousingCard({
             value={job.housing_status ? "Included ✓" : "Self-arranged"}
             valueColor={job.housing_status ? "text-emerald-600 font-semibold" : "text-slate-500"}
           />
-          <InfoChip icon="📋" label="Category" value={cfg.label} />
         </div>
 
-        {job.description && (
+        {/* 説明文（英語） */}
+        {descEn && (
           <p className="text-sm text-slate-600 mt-3 leading-relaxed border-t border-slate-50 pt-3">
-            {job.description}
+            {descEn}
           </p>
         )}
       </div>
 
-      {/* ── 近隣物件セクション ────────────────────────── */}
+      {/* Nearby Housing */}
       {nearbyProps.length > 0 && (
         <div className="border-t border-slate-100">
           <div className="px-4 pt-3 pb-1 flex items-center justify-between">
@@ -138,7 +139,6 @@ export default function JobHousingCard({
             <span className="text-xs text-slate-400">within 5km</span>
           </div>
 
-          {/* 横スクロール物件カード */}
           <div className="flex gap-3 px-4 pb-4 overflow-x-auto scrollbar-hide pt-2"
                style={{ scrollbarWidth: "none" }}>
             {nearbyProps.map((p) => (
@@ -153,7 +153,7 @@ export default function JobHousingCard({
         </div>
       )}
 
-      {/* ── アクションボタン ──────────────────────────── */}
+      {/* Action Buttons */}
       <div className="px-4 pb-4 flex gap-2">
         <button
           onClick={() => onApply?.(job.id)}
@@ -184,17 +184,10 @@ export default function JobHousingCard({
   );
 }
 
-// ─── ヘルパー ──────────────────────────────────────────────
 function InfoChip({
-  icon,
-  label,
-  value,
-  valueColor = "text-slate-800",
+  icon, label, value, valueColor = "text-slate-800",
 }: {
-  icon: string;
-  label: string;
-  value: string;
-  valueColor?: string;
+  icon: string; label: string; value: string; valueColor?: string;
 }) {
   return (
     <div className="bg-slate-50 rounded-xl p-2.5">
