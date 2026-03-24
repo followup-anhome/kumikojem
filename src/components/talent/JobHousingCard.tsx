@@ -170,20 +170,17 @@ export default function JobHousingCard({
         </button>
         <Link
           href={`/talent/jobs/${job.id}`}
-          className="w-12 h-12 rounded-xl border border-slate-200 hover:bg-blue-50 hover:border-blue-300
-                     flex items-center justify-center text-xl transition-colors active:scale-95"
-          title="View details"
-          aria-label="View job details"
+          className="px-3 h-12 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100
+                     flex items-center justify-center text-xs font-bold text-blue-700 transition-colors active:scale-95 whitespace-nowrap"
         >
-          📋
+          Details
         </Link>
         <button
           onClick={() => onSave?.(job.id)}
-          className="w-12 h-12 rounded-xl border border-slate-200 hover:bg-slate-50
-                     flex items-center justify-center text-xl transition-colors active:scale-95"
-          aria-label="Save job"
+          className="px-3 h-12 rounded-xl border border-slate-200 hover:bg-slate-50
+                     flex items-center justify-center text-xs font-bold text-slate-600 transition-colors active:scale-95 whitespace-nowrap"
         >
-          🔖
+          Save
         </button>
       </div>
     </div>
